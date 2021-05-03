@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using AppleAuth;
+﻿using AppleAuth;
 using AppleAuth.Enums;
 using AppleAuth.Extensions;
 using AppleAuth.Interfaces;
 using AppleAuth.Native;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +16,8 @@ public class AppleSignIn : MonoBehaviour
     public AppleSignInHandler _AppleSignInHandler;
 
     public Text DebugLogText;
+
+    public Button LoginButton;
 
     // Start is called before the first frame update
     void Start()
@@ -38,8 +36,8 @@ public class AppleSignIn : MonoBehaviour
         {
             Debug.Log("不是iOS裝置");
             DebugLogText.text = "不是iOS裝置";
-            GetComponent<Button>().enabled = false;
-            GetComponent<Button>().interactable = false;
+            LoginButton.enabled = false;
+            LoginButton.interactable = false;
         }
 
         InitializeAppleSignIn();
