@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/NewtonsoftDemo.unity
+    guid: d57548a0db25d42dca4f4b95976c33b3
   m_configObjects: {}
