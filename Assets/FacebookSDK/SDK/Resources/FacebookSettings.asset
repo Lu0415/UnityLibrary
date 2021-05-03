@@ -16,9 +16,9 @@ MonoBehaviour:
   clientTokens:
   - 
   appIds:
-  - 0
+  - 821777725104105
   appLabels:
-  - App Name
+  - UnityLibery
   cookie: 1
   logging: 1
   status: 1
