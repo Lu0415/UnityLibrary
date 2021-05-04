@@ -68,13 +68,17 @@ GoogleSignInHandler *gsiHandler;
   NSString *path = [[NSBundle mainBundle] pathForResource:@"GoogleService-Info"
                                                    ofType:@"plist"];
   NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-  NSString *clientId = [dict objectForKey:@"CLIENT_ID"];
+  NSString *clientId = [dict objectForKey:@"303413321002-osmliudj71vc5e0lqjd8l6mb137v0clj.apps.googleusercontent.com"];
+  /*修改前版本*/
+  //NSString *clientId = [dict objectForKey:@"CLIENT_ID"];
 
   gsiHandler = [GoogleSignInHandler alloc];
 
   // Setup the Sign-In instance.
   GIDSignIn *signIn = [GIDSignIn sharedInstance];
-  signIn.clientID = clientId;
+  [[GIDSignIn sharedInstance] setClientID:clientId];
+  /*修改前版本*/
+  //signIn.clientID = clientId;
   signIn.delegate = gsiHandler;
 
   // looks like it's just calling itself, but the implementations were swapped

@@ -223,26 +223,47 @@ static SignInResult *startSignIn() {
  * Sign-In.  The return value is a pointer to the currentResult object.
  */
 void *GoogleSignIn_SignIn() {
-  SignInResult *result = startSignIn();
-  if (!result) {
-    [[GIDSignIn sharedInstance] signIn];
-    result = currentResult_.get();
-  }
-  return result;
+    SignInResult *result = startSignIn();
+    if (!result) {
+        [[GIDSignIn sharedInstance] setClientID:@"303413321002-osmliudj71vc5e0lqjd8l6mb137v0clj.apps.googleusercontent.com"];
+        [[GIDSignIn sharedInstance] signIn];
+        result = currentResult_.get();
+    }
+    return result;
 }
+/*修改前版本*/
+//void *GoogleSignIn_SignIn() {
+//  SignInResult *result = startSignIn();
+//  if (!result) {
+//    [[GIDSignIn sharedInstance] signIn];
+//    result = currentResult_.get();
+//  }
+//  return result;
+//}
 
 /**
  * Attempt a silent sign-in. Return value is the pointer to the currentResult
  * object.
  */
 void *GoogleSignIn_SignInSilently() {
-  SignInResult *result = startSignIn();
-  if (!result) {
-    [[GIDSignIn sharedInstance] restorePreviousSignIn];
-    result = currentResult_.get();
-  }
-  return result;
+    SignInResult *result = startSignIn();
+    if (!result) {
+        [GIDSignIn sharedInstance].presentingViewController = UnityGetGLViewController();
+        [[GIDSignIn sharedInstance] setClientID:@"303413321002-osmliudj71vc5e0lqjd8l6mb137v0clj.apps.googleusercontent.com"];
+        [[GIDSignIn sharedInstance] restorePreviousSignIn];
+        result = currentResult_.get();
+    }
+    return result;
 }
+/*修改前版本*/
+//void *GoogleSignIn_SignInSilently() {
+//  SignInResult *result = startSignIn();
+//  if (!result) {
+//    [[GIDSignIn sharedInstance] restorePreviousSignIn];
+//    result = currentResult_.get();
+//  }
+//  return result;
+//}
 
 void GoogleSignIn_Signout() {
   GIDSignIn *signIn = [GIDSignIn sharedInstance];
