@@ -93,15 +93,10 @@ public class FBSignIn : MonoBehaviour
             isFacebookSignIn = true;
             Debug.Log("Success Response:\n" + result.RawResult);
             getAccessToken = (string)result.ResultDictionary["access_token"];
-            stringBuilder.AppendLine("Success getAccessToken:\n" + getAccessToken);
-            //如果Email沒有授權獲認證則填空
-            if (result.ResultDictionary.ContainsKey("email"))
-            {
-                getEmail = (string)result.ResultDictionary["email"];
-            }
             
-            stringBuilder.AppendLine("Success getEmail:\n" + getEmail);
-
+            //FB圖形API取得資料
+            FB.API("/me?fields=id,name,email", HttpMethod.GET, GetFacebookInfo);
+            
             FBLoginButton.interactable = false;
             FBLogoutButton.interactable = true;
         }
@@ -113,6 +108,31 @@ public class FBSignIn : MonoBehaviour
         Debug.Log("FB 登入回傳狀態 result: " + result.ToString());
         
         Debug.Log(isFacebookSignIn);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="result"></param>
+    public void GetFacebookInfo(IResult result)
+    {
+        var stringBuilder = new StringBuilder();
+        if (result.Error == null)
+        {
+            Debug.Log(result.ResultDictionary["id"].ToString());
+            Debug.Log(result.ResultDictionary["name"].ToString());
+            Debug.Log(result.ResultDictionary["email"].ToString());
+
+            stringBuilder.AppendFormat(result.ResultDictionary["id"].ToString() + "\n");
+            stringBuilder.AppendFormat(result.ResultDictionary["name"].ToString() + "\n");
+            stringBuilder.AppendFormat(result.ResultDictionary["email"].ToString() + "\n");
+            FBMessageText.text = stringBuilder.ToString();
+        }
+        else
+        {
+            Debug.Log(result.Error);
+            FBMessageText.text = result.Error;
+        }
     }
 
     /// <summary>
@@ -171,7 +191,7 @@ public class FBSignIn : MonoBehaviour
     private void CallFBLogin()
     {
         FBMessageText.text = "FB 登入方法執行";
-        FB.LogInWithReadPermissions(new List<string>() { "public_profile", "email", "user_friends" }, HandleResult);
+        FB.LogInWithReadPermissions(new List<string>() { "public_profile", "email"}, HandleResult);
     }
     
     
