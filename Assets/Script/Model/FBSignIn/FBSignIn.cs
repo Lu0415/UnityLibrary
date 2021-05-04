@@ -78,12 +78,14 @@ public class FBSignIn : MonoBehaviour
             //回傳錯誤
             isFacebookSignIn = false;
             Debug.Log("Error Response:\n" + result.Error);
+            stringBuilder.AppendLine("Error Response:\n" + result.Error);
         }
         else if (result.Cancelled)
         {
             //取消
             isFacebookSignIn = false;
             Debug.Log("Cancelled Response:\n" + result.RawResult);
+            stringBuilder.AppendLine("Cancelled Response:\n" + result.RawResult);
         }
         else if (!string.IsNullOrEmpty(result.RawResult))
         {
@@ -171,17 +173,8 @@ public class FBSignIn : MonoBehaviour
         FBMessageText.text = "FB 登入方法執行";
         FB.LogInWithReadPermissions(new List<string>() { "public_profile", "email", "user_friends" }, HandleResult);
     }
-    /*
-    private void CallFBLoginForPublish()
-    {
-        // It is generally good behavior to split asking for read and publish
-        // permissions rather than ask for them all at once.
-        //
-        // In your own game, consider postponing this call until the moment
-        // you actually need it.
-        FB.LogInWithPublishPermissions(new List<string>() { "publish_actions" }, HandleResult);
-    }
-    */
+    
+    
     /// <summary>
     /// FB 登出方法執行
     /// </summary>
@@ -190,16 +183,9 @@ public class FBSignIn : MonoBehaviour
         FBMessageText.text = "FB 登出方法執行";
         FB.LogOut();
         isFacebookSignIn = false;
-    }
 
-    /// <summary>
-    /// 更改按鍵可觸碰與否狀態(FB)
-    /// </summary>
-    /// <param name="isEnable"></param>
-    private void UpdateButtonEnable(bool _isEnable)
-    {
-        Debug.Log("UpdateButtonEnable: " + _isEnable);
-        GetComponent<Button>().enabled = _isEnable;
+        FBLoginButton.interactable = true;
+        FBLogoutButton.interactable = false;
     }
 
 }
