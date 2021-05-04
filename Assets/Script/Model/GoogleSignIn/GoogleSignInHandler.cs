@@ -43,8 +43,7 @@ public class GoogleSignInHandler : MonoBehaviour
         }
 
 
-        GoogleLoginButton.interactable = false;
-        GoogleLogoutButton.interactable = false;
+        
 
         //填入ClientID及可以取得id, token
         configuration = new GoogleSignInConfiguration
@@ -54,7 +53,18 @@ public class GoogleSignInHandler : MonoBehaviour
         };
 
 
-        
+        if (GoogleSignIn.Configuration != null)
+        {
+            GoogleLoginButton.interactable = false;
+            GoogleLogoutButton.interactable = false;
+        }
+        else
+        {
+            GoogleLoginButton.interactable = true;
+            GoogleLogoutButton.interactable = false;
+        }
+
+
     }
 
     /// <summary>
