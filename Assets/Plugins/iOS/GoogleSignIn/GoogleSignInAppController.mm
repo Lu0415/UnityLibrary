@@ -68,7 +68,7 @@ GoogleSignInHandler *gsiHandler;
   NSString *path = [[NSBundle mainBundle] pathForResource:@"GoogleService-Info"
                                                    ofType:@"plist"];
   NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-  NSString *clientId = [dict objectForKey:@"303413321002-osmliudj71vc5e0lqjd8l6mb137v0clj.apps.googleusercontent.com"];
+  NSString *clientId = [dict objectForKey:@"303413321002-01cqhk44kfd7o0lh4168805744fcobqd.apps.googleusercontent.com"];
   /*修改前版本*/
   //NSString *clientId = [dict objectForKey:@"CLIENT_ID"];
 

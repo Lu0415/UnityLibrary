@@ -225,7 +225,7 @@ static SignInResult *startSignIn() {
 void *GoogleSignIn_SignIn() {
     SignInResult *result = startSignIn();
     if (!result) {
-        [[GIDSignIn sharedInstance] setClientID:@"303413321002-osmliudj71vc5e0lqjd8l6mb137v0clj.apps.googleusercontent.com"];
+        [[GIDSignIn sharedInstance] setClientID:@"303413321002-01cqhk44kfd7o0lh4168805744fcobqd.apps.googleusercontent.com"];
         [[GIDSignIn sharedInstance] signIn];
         result = currentResult_.get();
     }
@@ -249,7 +249,7 @@ void *GoogleSignIn_SignInSilently() {
     SignInResult *result = startSignIn();
     if (!result) {
         [GIDSignIn sharedInstance].presentingViewController = UnityGetGLViewController();
-        [[GIDSignIn sharedInstance] setClientID:@"303413321002-osmliudj71vc5e0lqjd8l6mb137v0clj.apps.googleusercontent.com"];
+        [[GIDSignIn sharedInstance] setClientID:@"303413321002-01cqhk44kfd7o0lh4168805744fcobqd.apps.googleusercontent.com"];
         [[GIDSignIn sharedInstance] restorePreviousSignIn];
         result = currentResult_.get();
     }
