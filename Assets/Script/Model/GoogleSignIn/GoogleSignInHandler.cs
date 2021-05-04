@@ -26,13 +26,6 @@ public class GoogleSignInHandler : MonoBehaviour
     /// </summary>
     void Awake()
     {
-        //填入ClientID及可以取得id, token
-        configuration = new GoogleSignInConfiguration
-        {
-            WebClientId = "303413321002-osmliudj71vc5e0lqjd8l6mb137v0clj.apps.googleusercontent.com",
-            RequestIdToken = true
-        };
-
 
         if (GameObject.Find("/Canvas/Content/Image/Message").TryGetComponent<Text>(out Text textSerialization))
         {
@@ -52,6 +45,16 @@ public class GoogleSignInHandler : MonoBehaviour
 
         GoogleLoginButton.interactable = false;
         GoogleLogoutButton.interactable = false;
+
+        //填入ClientID及可以取得id, token
+        configuration = new GoogleSignInConfiguration
+        {
+            WebClientId = "303413321002-osmliudj71vc5e0lqjd8l6mb137v0clj.apps.googleusercontent.com",
+            RequestIdToken = true
+        };
+
+
+        
     }
 
     /// <summary>
@@ -63,6 +66,7 @@ public class GoogleSignInHandler : MonoBehaviour
         {
             Debug.Log("GoogleSignIn.Configuration != null");
             OnSignOut();
+
         }
         
         GoogleSignIn.Configuration = configuration;
@@ -84,6 +88,9 @@ public class GoogleSignInHandler : MonoBehaviour
         Debug.Log("Google Calling SignOut");
         GoogleMessageText.text = "Google Calling SignOut";
         GoogleSignIn.DefaultInstance.SignOut();
+
+        GoogleLoginButton.interactable = true;
+        GoogleLogoutButton.interactable = false;
     }
 
     /// <summary>
@@ -131,6 +138,9 @@ public class GoogleSignInHandler : MonoBehaviour
             stringBuilder.Append("Google UserId: " + task.Result.UserId + "\n");
 
             GoogleMessageText.text = stringBuilder.ToString();
+
+            GoogleLoginButton.interactable = false;
+            GoogleLogoutButton.interactable = true;
         }
     }
 
@@ -161,15 +171,5 @@ public class GoogleSignInHandler : MonoBehaviour
 
         GoogleSignIn.DefaultInstance.SignIn().ContinueWith(
           OnAuthenticationFinished);
-    }
-
-    /// <summary>
-    /// 更改按鍵可觸碰與否狀態(Google)
-    /// </summary>
-    /// <param name="isEnable"></param>
-    private void UpdateButtonEnable(bool _isEnable)
-    {
-        Debug.Log("Google UpdateButtonEnable: " + _isEnable);
-        GetComponent<Button>().enabled = _isEnable;
     }
 }
