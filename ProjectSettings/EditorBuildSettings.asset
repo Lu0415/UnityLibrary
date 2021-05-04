@@ -11,7 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/NewtonsoftDemo.unity
     guid: d57548a0db25d42dca4f4b95976c33b3
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/FbSignIn.unity
     guid: 742d6a6f4d2cd4ad4ad2108464e19eb5
+  - enabled: 1
+    path: Assets/Scenes/GoogleSignIn.unity
+    guid: ec6e0f2b7449e4e0b88e4a78cc8bd7ae
   m_configObjects: {}

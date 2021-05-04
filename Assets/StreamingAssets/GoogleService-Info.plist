@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>303413321002-01cqhk44kfd7o0lh4168805744fcobqd.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.303413321002-01cqhk44kfd7o0lh4168805744fcobqd</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD5Q2iWoTEE56mgZWR9IrZbHysjRZfQSvU</string>
+	<key>GCM_SENDER_ID</key>
+	<string>303413321002</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.xulong.testNewId</string>
+	<key>PROJECT_ID</key>
+	<string>unitylibery</string>
+	<key>STORAGE_BUCKET</key>
+	<string>unitylibery.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:303413321002:ios:6b18687211a5027c461253</string>
+</dict>
+</plist>
