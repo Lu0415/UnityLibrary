@@ -37,7 +37,7 @@ public class GoogleAdMobControl : MonoBehaviour
     private BannerView bannerView;
 
     //插頁廣告相關元素
-    private InterstitialAd interstitialAd;
+    private InterstitialAd interstitial;
 
     //獎勵廣告相關元素
     private RewardedAd rewardedAd;
@@ -141,6 +141,7 @@ public class GoogleAdMobControl : MonoBehaviour
                 RequestBanner();
                 break;
             case (int)AdType.Interstitial: //插頁式廣告
+                RequestInterstitial();
                 break;
             case (int)AdType.Reward: //獎勵廣告
                 break;
@@ -148,6 +149,7 @@ public class GoogleAdMobControl : MonoBehaviour
     }
 
 
+    #region 橫幅廣告事件
 
     /// <summary>
     /// 啟動橫幅
@@ -221,6 +223,62 @@ public class GoogleAdMobControl : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region 插頁式廣告事件
+
+    private void RequestInterstitial()
+    {
+
+        string adUnitId = "";
+        if (isDebug)
+        {
+#if UNITY_ANDROID
+             adUnitId = "ca-app-pub-3940256099942544/1033173712";
+#elif UNITY_IPHONE
+         adUnitId = "ca-app-pub-3940256099942544/4411468910";
+#else
+         adUnitId = "unexpected_platform";
+#endif
+
+        }
+        else
+        {
+#if UNITY_ANDROID
+            adUnitId = "ca-app-pub-8147047871025450/8175771598";
+#elif UNITY_IPHONE
+             adUnitId = "ca-app-pub-8147047871025450/7437404991";
+#else
+             adUnitId = "unexpected_platform";
+#endif
+
+        }
+        SetLog("RequestInterstitial adUnitId:" + adUnitId);
+
+        //建立插頁式廣告 
+        this.interstitial = new InterstitialAd(adUnitId);
+
+        //串接監聽
+        // Called when an ad request has successfully loaded.
+        this.interstitial.OnAdLoaded += HandleOnAdLoaded;
+        // Called when an ad request failed to load.
+        this.interstitial.OnAdFailedToLoad += HandleOnAdFailedToLoad;
+        // Called when an ad is shown.
+        this.interstitial.OnAdOpening += HandleOnAdOpened;
+        // Called when the ad is closed.
+        this.interstitial.OnAdClosed += HandleOnAdClosed;
+        // Called when the ad click caused the user to leave the application.
+        this.interstitial.OnAdLeavingApplication += HandleOnAdLeavingApplication;
+
+        //加載廣告
+        // Create an empty ad request.
+        AdRequest request = new AdRequest.Builder().Build();
+        // Load the interstitial with the request.
+        this.interstitial.LoadAd(request);
+    }
+
+    #endregion
+
     #region 監聽事件
 
     /// <summary>
@@ -258,6 +316,11 @@ public class GoogleAdMobControl : MonoBehaviour
                 //this.bannerView.Show();
                 break;
             case AdType.Interstitial: //插頁式廣告
+                if (this.interstitial.IsLoaded())
+                {
+                    //顯示廣告
+                    this.interstitial.Show();
+                }
                 break;
             case AdType.Reward: //獎勵廣告
                 break;
@@ -292,6 +355,22 @@ public class GoogleAdMobControl : MonoBehaviour
     private void HandleOnAdClosed(object sender, EventArgs e)
     {
         SetLog("HandleOnAdClosed 廣告關閉");
+        switch (currentAdType)
+        {
+            case AdType.None: //無廣告
+                break;
+            case AdType.Banner: //橫幅廣告
+                break;
+            case AdType.Interstitial: //插頁式廣告
+                if (this.interstitial != null)
+                {
+                    //顯示廣告
+                    this.interstitial.Destroy();
+                }
+                break;
+            case AdType.Reward: //獎勵廣告
+                break;
+        }
     }
 
     /// <summary>
