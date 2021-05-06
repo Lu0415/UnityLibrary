@@ -23,6 +23,8 @@ public class GoogleAdMobControl : MonoBehaviour
     private Button InterstitialAdButton;
     //「測試用」獎勵廣告按鈕
     private Button RewardAdButton;
+    //「測試用」獎勵廣告按鈕
+    private Button RewardedInterstitialAdButton;
 
     //自定義廣告型別
     public enum AdType
@@ -30,7 +32,8 @@ public class GoogleAdMobControl : MonoBehaviour
         None = 0,
         Banner = 1,
         Interstitial = 2,
-        Reward = 3
+        Reward = 3,
+        RewardedInterstitial = 4
     }
     //現在執行的廣告型別
     private AdType currentAdType = AdType.None;
@@ -43,6 +46,9 @@ public class GoogleAdMobControl : MonoBehaviour
 
     //獎勵廣告相關元素
     private RewardedAd rewardedAd;
+
+    //插頁式獎勵廣告相關元素
+    private RewardedInterstitialAd rewardedInterstitialAd;
 
     #region 實際專案使用參數
     //廣告ID
@@ -76,6 +82,11 @@ public class GoogleAdMobControl : MonoBehaviour
         {
             RewardAdButton = _RewardAdButton;
             RewardAdButton.interactable = false;
+        }
+        if (GameObject.Find("/Canvas/Group/ItemGroup/ScrollView/Viewport/Content/RewardedInterstitialAdButton").TryGetComponent<Button>(out Button _RewardedInterstitialAdButton))
+        {
+            RewardedInterstitialAdButton = _RewardedInterstitialAdButton;
+            RewardedInterstitialAdButton.interactable = false;
         }
     }
 
@@ -156,6 +167,9 @@ public class GoogleAdMobControl : MonoBehaviour
                 break;
             case (int)AdType.Reward: //獎勵廣告
                 RequestAndLoadRewardedAd();
+                break;
+            case (int)AdType.RewardedInterstitial: //插頁式獎勵廣告
+                RequestAndLoadRewardedInterstitialAd();
                 break;
         }
     }
@@ -317,7 +331,7 @@ public class GoogleAdMobControl : MonoBehaviour
             adUnitId = "unexpected_platform";
 #endif
         }
-        SetLog("RequestInterstitial adUnitId:" + adUnitId);
+        SetLog("RequestAndLoadRewardedAd adUnitId:" + adUnitId);
 
         //建立獎勵廣告
         this.rewardedAd = new RewardedAd(adUnitId);
@@ -348,6 +362,71 @@ public class GoogleAdMobControl : MonoBehaviour
 
     #endregion
 
+    #region 插頁式廣告事件
+    public void RequestAndLoadRewardedInterstitialAd()
+    {
+        string adUnitId = "";
+        if (isDebug)
+        {
+#if UNITY_ANDROID
+            adUnitId = "ca-app-pub-3940256099942544/5354046379";
+#elif UNITY_IPHONE
+            adUnitId = "ca-app-pub-3940256099942544/6978759866";
+#else
+            adUnitId = "unexpected_platform";
+#endif
+        }
+        else
+        {
+#if UNITY_ANDROID
+            adUnitId = "ca-app-pub-8147047871025450/3171992393";
+#elif UNITY_IPHONE
+            adUnitId = "ca-app-pub-8147047871025450/2050482416";
+#else
+            adUnitId = "unexpected_platform";
+#endif
+        }
+        SetLog("RequestAndLoadRewardedInterstitialAd adUnitId:" + adUnitId);
+
+        // Create an empty ad request.
+        AdRequest request = new AdRequest.Builder().Build();
+        // Load the rewarded ad with the request.
+        RewardedInterstitialAd.LoadAd(adUnitId, request, adLoadCallback);
+    }
+
+    private void adLoadCallback(RewardedInterstitialAd ad, string error)
+    {
+        if (error == null)
+        {
+            MobileAdsEventExecutor.ExecuteInUpdate(() =>
+            {
+                SetLog(string.Format("adLoadCallback 「{0}」廣告物件建立成功", AdType.RewardedInterstitial.ToString()));
+            });
+            this.rewardedInterstitialAd = ad;
+
+            this.rewardedInterstitialAd.OnAdFailedToPresentFullScreenContent += HandleAdFailedToPresent;
+            this.rewardedInterstitialAd.OnAdDidPresentFullScreenContent += HandleAdDidPresent;
+            this.rewardedInterstitialAd.OnAdDidDismissFullScreenContent += HandleAdDidDismiss;
+            this.rewardedInterstitialAd.OnPaidEvent += HandlePaidEvent;
+
+            this.rewardedInterstitialAd.Show(UserEarnedRewardCallback);
+        }
+        else
+        {
+            MobileAdsEventExecutor.ExecuteInUpdate(() =>
+            {
+                SetLog(string.Format("adLoadCallback 「{0}」廣告物件建立失敗 error:{1}", AdType.Banner.ToString(), error));
+            });
+            return;
+        }
+    }
+
+
+
+
+
+    #endregion
+
     #region 監聽事件
 
     /// <summary>
@@ -369,6 +448,7 @@ public class GoogleAdMobControl : MonoBehaviour
             CloseBannerAdButton.interactable = true;
             InterstitialAdButton.interactable = true;
             RewardAdButton.interactable = true;
+            RewardedInterstitialAdButton.interactable = true;
         });
     }
 
@@ -492,6 +572,61 @@ public class GoogleAdMobControl : MonoBehaviour
     private void HandleUserEarnedReward(object sender, Reward e)
     {
         SetLog(string.Format("HandleRewardedAdFailedToShow 「{0}」廣告獎勵內容 Type:{1} , Amount:{2}", currentAdType.ToString(), e.Type, e.Amount));
+    }
+
+    /// <summary>
+    /// 插頁式獎勵廣告
+    /// 廣告呈現失敗
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HandleAdFailedToPresent(object sender, AdErrorEventArgs e)
+    {
+        SetLog(string.Format("HandleAdFailedToPresent 「{0}」廣告呈現失敗 error:{1}", currentAdType.ToString(), e.Message));
+    }
+
+    /// <summary>
+    /// 插頁式獎勵廣告
+    /// 廣告呈現成功
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HandleAdDidPresent(object sender, EventArgs e)
+    {
+        SetLog(string.Format("HandleAdDidPresent 「{0}」廣告呈現成功", currentAdType.ToString()));
+
+    }
+
+    /// <summary>
+    /// 插頁式獎勵廣告
+    /// 廣告關閉
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HandleAdDidDismiss(object sender, EventArgs e)
+    {
+        SetLog(string.Format("HandleAdDidDismiss 「{0}」廣告關閉", currentAdType.ToString()));
+    }
+
+    /// <summary>
+    /// 插頁式獎勵廣告
+    /// 廣告付費
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HandlePaidEvent(object sender, AdValueEventArgs e)
+    {
+        SetLog(string.Format("HandlePaidEvent 「{0}」已經收到廣告付費要求 AdValue:{1}", currentAdType.ToString(), e.AdValue));
+    }
+
+    /// <summary>
+    /// 插頁式獎勵廣告
+    /// 廣告獎勵內容
+    /// </summary>
+    /// <param name="reward"></param>
+    private void UserEarnedRewardCallback(Reward e)
+    {
+        SetLog(string.Format("UserEarnedRewardCallback 「{0}」廣告獎勵內容 Type:{1} , Amount:{2}", currentAdType.ToString(), e.Type, e.Amount));
     }
 
 
