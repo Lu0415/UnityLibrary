@@ -17,6 +17,8 @@ public class GoogleAdMobControl : MonoBehaviour
     private Text AdsMessageText;
     //「測試用」橫幅廣告按鈕
     private Button BannerAdButton;
+    //「測試用」橫幅廣告按鈕
+    private Button CloseBannerAdButton;
     //「測試用」插頁廣告按鈕
     private Button InterstitialAdButton;
     //「測試用」獎勵廣告按鈕
@@ -58,14 +60,22 @@ public class GoogleAdMobControl : MonoBehaviour
         if (GameObject.Find("/Canvas/Group/ItemGroup/ScrollView/Viewport/Content/BannerAdButton").TryGetComponent<Button>(out Button _BannerAdButton))
         {
             BannerAdButton = _BannerAdButton;
+            BannerAdButton.interactable = false;
+        }
+        if (GameObject.Find("/Canvas/Group/ItemGroup/ScrollView/Viewport/Content/CloseBannerAdButton").TryGetComponent<Button>(out Button _CloseBannerAdButton))
+        {
+            CloseBannerAdButton = _CloseBannerAdButton;
+            CloseBannerAdButton.interactable = false;
         }
         if (GameObject.Find("/Canvas/Group/ItemGroup/ScrollView/Viewport/Content/InterstitialAdButton").TryGetComponent<Button>(out Button _InterstitialAdButton))
         {
             InterstitialAdButton = _InterstitialAdButton;
+            InterstitialAdButton.interactable = false;
         }
         if (GameObject.Find("/Canvas/Group/ItemGroup/ScrollView/Viewport/Content/RewardAdButton").TryGetComponent<Button>(out Button _RewardAdButton))
         {
             RewardAdButton = _RewardAdButton;
+            RewardAdButton.interactable = false;
         }
     }
 
@@ -132,6 +142,7 @@ public class GoogleAdMobControl : MonoBehaviour
     public void RequestAd(int type)
     {
         currentAdType = (AdType)type;
+        SetLog("----------分隔----------");
         SetLog("RequestAd currentAdType:" + currentAdType.ToString());
         switch (type)
         {
@@ -144,6 +155,7 @@ public class GoogleAdMobControl : MonoBehaviour
                 RequestInterstitial();
                 break;
             case (int)AdType.Reward: //獎勵廣告
+                RequestAndLoadRewardedAd();
                 break;
         }
     }
@@ -179,7 +191,7 @@ public class GoogleAdMobControl : MonoBehaviour
 #endif
 
         }
-        SetLog("RequestBanner adUnitId:"+ adUnitId);
+        SetLog("RequestBanner adUnitId:" + adUnitId);
 
         //橫幅還存在則刪除
         if (this.bannerView != null)
@@ -220,6 +232,7 @@ public class GoogleAdMobControl : MonoBehaviour
         {
             SetLog("DestroyBannerAd 關閉橫幅廣告");
             this.bannerView.Destroy();
+            this.bannerView = null;
         }
     }
 
@@ -234,7 +247,7 @@ public class GoogleAdMobControl : MonoBehaviour
         if (isDebug)
         {
 #if UNITY_ANDROID
-             adUnitId = "ca-app-pub-3940256099942544/1033173712";
+            adUnitId = "ca-app-pub-3940256099942544/1033173712";
 #elif UNITY_IPHONE
          adUnitId = "ca-app-pub-3940256099942544/4411468910";
 #else
@@ -279,6 +292,62 @@ public class GoogleAdMobControl : MonoBehaviour
 
     #endregion
 
+    #region 獎勵廣告
+    private void RequestAndLoadRewardedAd()
+    {
+
+        string adUnitId = "";
+        if (isDebug)
+        {
+#if UNITY_ANDROID
+            adUnitId = "ca-app-pub-3940256099942544/5224354917";
+#elif UNITY_IPHONE
+            adUnitId = "ca-app-pub-3940256099942544/1712485313";
+#else
+            adUnitId = "unexpected_platform";
+#endif
+        }
+        else
+        {
+#if UNITY_ANDROID
+            adUnitId = "ca-app-pub-8147047871025450/3708971029";
+#elif UNITY_IPHONE
+            adUnitId = "ca-app-pub-8147047871025450/1793254120";
+#else
+            adUnitId = "unexpected_platform";
+#endif
+        }
+        SetLog("RequestInterstitial adUnitId:" + adUnitId);
+
+        //建立獎勵廣告
+        this.rewardedAd = new RewardedAd(adUnitId);
+
+        //串接監聽
+        // Called when an ad request has successfully loaded.
+        this.rewardedAd.OnAdLoaded += HandleOnAdLoaded;
+        // Called when an ad request failed to load.
+        this.rewardedAd.OnAdFailedToLoad += HandleRewardedAdFailedToLoad;
+        // Called when an ad is shown.
+        this.rewardedAd.OnAdOpening += HandleOnAdOpened;
+        // Called when an ad request failed to show.
+        this.rewardedAd.OnAdFailedToShow += HandleRewardedAdFailedToShow;
+        // Called when the user should be rewarded for interacting with the ad.
+        this.rewardedAd.OnUserEarnedReward += HandleUserEarnedReward;
+        // Called when the ad is closed.
+        this.rewardedAd.OnAdClosed += HandleOnAdClosed;
+
+        //加載廣告
+        // Create an empty ad request.
+        AdRequest request = new AdRequest.Builder().Build();
+        // Load the rewarded ad with the request.
+        this.rewardedAd.LoadAd(request);
+    }
+
+
+
+
+    #endregion
+
     #region 監聽事件
 
     /// <summary>
@@ -295,7 +364,11 @@ public class GoogleAdMobControl : MonoBehaviour
         MobileAdsEventExecutor.ExecuteInUpdate(() =>
         {
             //初始化 橫幅廣告 
-            SetLog("HandleBannerInitCompleteAction");
+            SetLog(string.Format("HandleBannerInitCompleteAction 「{0}」初始化", AdType.Banner.ToString()));
+            BannerAdButton.interactable = true;
+            CloseBannerAdButton.interactable = true;
+            InterstitialAdButton.interactable = true;
+            RewardAdButton.interactable = true;
         });
     }
 
@@ -306,14 +379,13 @@ public class GoogleAdMobControl : MonoBehaviour
     /// <param name="e"></param>
     private void HandleOnAdLoaded(object sender, EventArgs e)
     {
-        SetLog("HandleOnAdLoaded 讀取廣告成功");
+        SetLog(string.Format("HandleOnAdLoaded 「{0}」讀取廣告成功", currentAdType.ToString()));
         switch (currentAdType)
         {
             case AdType.None: //無廣告
                 break;
             case AdType.Banner: //橫幅廣告
                 //橫幅廣告不需要show()
-                //this.bannerView.Show();
                 break;
             case AdType.Interstitial: //插頁式廣告
                 if (this.interstitial.IsLoaded())
@@ -323,6 +395,11 @@ public class GoogleAdMobControl : MonoBehaviour
                 }
                 break;
             case AdType.Reward: //獎勵廣告
+                if (this.rewardedAd.IsLoaded())
+                {
+                    //顯示廣告
+                    this.rewardedAd.Show();
+                }
                 break;
         }
     }
@@ -334,17 +411,17 @@ public class GoogleAdMobControl : MonoBehaviour
     /// <param name="e"></param>
     private void HandleOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
     {
-        SetLog("HandleOnAdFailedToLoad 讀取廣告失敗 :"+e.Message);
+        SetLog(string.Format("HandleOnAdFailedToLoad 「{0}」讀取廣告失敗 error:{1}", currentAdType.ToString(), e.Message));
     }
 
     /// <summary>
     /// 廣告打開
     /// </summary>
-    /// <param name="sender"></param>
+    /// <param name="sender"></param
     /// <param name="e"></param>
     private void HandleOnAdOpened(object sender, EventArgs e)
     {
-        SetLog("HandleOnAdOpened 廣告打開");
+        SetLog(string.Format("HandleOnAdOpened 「{0}」廣告打開", currentAdType.ToString()));
     }
 
     /// <summary>
@@ -354,7 +431,7 @@ public class GoogleAdMobControl : MonoBehaviour
     /// <param name="e"></param>
     private void HandleOnAdClosed(object sender, EventArgs e)
     {
-        SetLog("HandleOnAdClosed 廣告關閉");
+        SetLog(string.Format("HandleOnAdClosed 「{0}」廣告關閉", currentAdType.ToString()));
         switch (currentAdType)
         {
             case AdType.None: //無廣告
@@ -364,7 +441,7 @@ public class GoogleAdMobControl : MonoBehaviour
             case AdType.Interstitial: //插頁式廣告
                 if (this.interstitial != null)
                 {
-                    //顯示廣告
+                    //刪除廣告
                     this.interstitial.Destroy();
                 }
                 break;
@@ -380,8 +457,43 @@ public class GoogleAdMobControl : MonoBehaviour
     /// <param name="e"></param>
     private void HandleOnAdLeavingApplication(object sender, EventArgs e)
     {
-        SetLog("HandleOnAdLeavingApplication 點擊廣告離開APP");
+        SetLog(string.Format("HandleOnAdLeavingApplication 「{0}」點擊廣告離開APP", currentAdType.ToString()));
     }
+
+    /// <summary>
+    /// 獎勵廣告
+    /// 廣告讀取錯誤
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HandleRewardedAdFailedToLoad(object sender, AdErrorEventArgs e)
+    {
+
+        SetLog(string.Format("HandleRewardedAdFailedToLoad 「{0}」廣告讀取錯誤 error: {1}", currentAdType.ToString(), e.Message));
+    }
+
+    /// <summary>
+    /// 獎勵廣告
+    /// 廣告顯示失敗
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HandleRewardedAdFailedToShow(object sender, AdErrorEventArgs e)
+    {
+        SetLog(string.Format("HandleRewardedAdFailedToShow 「{0}」廣告顯示失敗 error:{1}", currentAdType.ToString(), e.Message));
+    }
+
+    /// <summary>
+    /// 獎勵廣告
+    /// 廣告獎勵內容
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HandleUserEarnedReward(object sender, Reward e)
+    {
+        SetLog(string.Format("HandleRewardedAdFailedToShow 「{0}」廣告獎勵內容 Type:{1} , Amount:{2}", currentAdType.ToString(), e.Type, e.Amount));
+    }
+
 
     #endregion
 
