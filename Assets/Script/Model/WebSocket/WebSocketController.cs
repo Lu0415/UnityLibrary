@@ -57,7 +57,7 @@ public class WebSocketController : MonoBehaviour
         _ws.OnOpen += SocketOpen;
         _ws.OnMessage += SocketOnMessage;
         //_ws.OnError += SocketOnError;
-        //_ws.OnClose += SocketOnClose;
+        _ws.OnClose += SocketOnClose;
         _ws.ConnectAsync();
         Debug.Log("開始連接");
         
@@ -102,5 +102,42 @@ public class WebSocketController : MonoBehaviour
     public void SocketSendMsg(string msg)
     {
         _ws.Send(msg);
+        
+    }
+
+    /// <summary>
+    /// 關閉socket
+    /// </summary>
+    public void CloseSocket()
+    {
+        _ws.Close();
+    }
+
+    /// <summary>
+    /// 接收關閉
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void SocketOnClose(object sender, CloseEventArgs e)
+    {
+        _wsConnectState = false;
+        _ws.EmitOnPing = false;
+        _ws.OnOpen -= SocketOpen;
+        _ws.OnMessage -= SocketOnMessage;
+        //_ws.OnError -= SocketOnError;
+        _ws.OnClose -= SocketOnClose;
+        Debug.Log("SocketClose 關閉拉");
+        if (WebSocketReturnMsg != null) WebSocketReturnMsg(this, "SocketClose 關閉拉" + "\n");
+    }
+
+    /// <summary>
+    /// 接收錯誤
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void SocketOnError(object sender, CloseEventArgs e)
+    {
+        Debug.Log("SocketError 錯誤拉: " + sender);
+        if (WebSocketReturnMsg != null) WebSocketReturnMsg(this, "SocketError 錯誤拉: " + sender + "\n");
     }
 }

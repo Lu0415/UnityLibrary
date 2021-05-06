@@ -45,22 +45,14 @@ public class WebSocketScenesController : MonoBehaviour
         {
             ScrollControl = _scrollControl;
         }
-
-        WebSocketController._instance.CreateSocket();
-
+        
         _stringBuilder = new StringBuilder();
-        _stringBuilder.Append("開始連接socket" + "\n");
 
         SocketMessageText.text = _stringBuilder.ToString();
         
         WebSocketController._instance.WebSocketReturnMsg += WebSocketReturnMsgListener;
 
         SendMsgButton.interactable = false;
-        
-    }
-
-    private void OnGUI()
-    {
         
     }
 
@@ -122,5 +114,22 @@ public class WebSocketScenesController : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         ScrollControl.verticalNormalizedPosition = 0f;
+    }
+
+    /// <summary>
+    /// 點擊關閉socket按鈕
+    /// </summary>
+    public void CloseSocketButtonPressed()
+    {
+        WebSocketController._instance.CloseSocket();
+    }
+
+    /// <summary>
+    /// 點擊socket連線按鈕
+    /// </summary>
+    public void SocketConnectButtonPressed()
+    {
+        WebSocketController._instance.CreateSocket();
+        _stringBuilder.Append("開始連接socket" + "\n");
     }
 }
