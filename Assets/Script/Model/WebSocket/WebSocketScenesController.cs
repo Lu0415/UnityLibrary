@@ -22,6 +22,11 @@ public class WebSocketScenesController : MonoBehaviour
 
     ScrollRect ScrollControl;
 
+    private void Awake()
+    {
+        _stringBuilder = new StringBuilder();
+    }
+
     void Start()
     {
 
@@ -36,7 +41,7 @@ public class WebSocketScenesController : MonoBehaviour
             MsgInputField.onValueChanged.AddListener(delegate { InputFieldOnValueChanged(); });
         }
 
-        if (GameObject.Find("/Canvas/Content/SendMsg").TryGetComponent<Button>(out Button _sendMsgButton))
+        if (GameObject.Find("/Canvas/Content/ButtonRow/SendMessage").TryGetComponent<Button>(out Button _sendMsgButton))
         {
             SendMsgButton = _sendMsgButton;
         }

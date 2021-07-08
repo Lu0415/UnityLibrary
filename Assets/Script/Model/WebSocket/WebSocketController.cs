@@ -71,7 +71,7 @@ public class WebSocketController : MonoBehaviour
     private void SocketOpen(object sender, EventArgs e)
     {
         _wsConnectState = true;
-        Debug.Log("成功連線 SocketOpen");
+        Debug.Log("成功連線 SocketOpen \n");
         if (WebSocketReturnMsg != null) WebSocketReturnMsg(this, "成功連線 SocketOpen");
         _ws.EmitOnPing = true;
     }
