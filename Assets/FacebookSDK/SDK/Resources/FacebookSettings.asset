@@ -24,7 +24,7 @@ MonoBehaviour:
   status: 1
   xfbml: 0
   frictionlessRequests: 1
-  androidKeystorePath: /Users/n010/UserLiberyKey.keystore
+  androidKeystorePath: /Users/n010/Desktop/unity/UnityLibrary/key/new_user.keystore
   iosURLSuffix: 
   appLinkSchemes:
   - list: []

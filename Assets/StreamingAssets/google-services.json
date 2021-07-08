@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "303413321002-2c441vkmr1hgct49ckmajpis5pddjair.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.DefaultCompany.UnityLibrary",
+            "certificate_hash": "c6bc9d89591400818700f26a6efa6599bf6ad900"
+          }
+        },
+        {
           "client_id": "303413321002-gmld28ecfb0n2q0ie5jgfbndba4ma0sb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
