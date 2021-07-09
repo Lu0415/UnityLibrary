@@ -10,16 +10,28 @@ public class FirebaseAnalyticsController : MonoBehaviour
 {
 
     private bool firebaseInitialized = false;
+    DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
 
     private void Awake()
     {
-        InitializeFirebase();
+        //InitializeFirebase();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+            dependencyStatus = task.Result;
+            if (dependencyStatus == DependencyStatus.Available)
+            {
+                InitializeFirebase();
+            }
+            else
+            {
+                Debug.LogError(
+                  "Could not resolve all Firebase dependencies: " + dependencyStatus);
+            }
+        });
     }
 
     // Update is called once per frame
@@ -48,9 +60,11 @@ public class FirebaseAnalyticsController : MonoBehaviour
 
     public void AnalyticsEventTest()
     {
-        if (firebaseInitialized)
-        {
-            FirebaseAnalytics.LogEvent("action", "test", "test");
-        }
+  //      FirebaseAnalytics
+  //.LogEvent(FirebaseAnalytics.EventLogin);
+        //if (firebaseInitialized)
+        //{
+        //FirebaseAnalytics.LogEvent("action", "test", "test");
+        //}
     }
 }
