@@ -20,7 +20,10 @@ public class FirebaseAnalyticsController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+        Debug.Log("start.");
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+        {
+            Debug.Log("dependencyStatus:" + dependencyStatus);
             dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
@@ -37,7 +40,7 @@ public class FirebaseAnalyticsController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     // Handle initialization of the necessary firebase modules:
@@ -52,7 +55,7 @@ public class FirebaseAnalyticsController : MonoBehaviour
           FirebaseAnalytics.UserPropertySignUpMethod,
           "Google");
         // Set the user ID.
-        FirebaseAnalytics.SetUserId("uber_user_510");
+        FirebaseAnalytics.SetUserId("uber_user_511");
         // Set default session duration values.
         FirebaseAnalytics.SetSessionTimeoutDuration(new TimeSpan(0, 30, 0));
         firebaseInitialized = true;
@@ -60,11 +63,13 @@ public class FirebaseAnalyticsController : MonoBehaviour
 
     public void AnalyticsEventTest()
     {
-  //      FirebaseAnalytics
-  //.LogEvent(FirebaseAnalytics.EventLogin);
-        //if (firebaseInitialized)
-        //{
-        //FirebaseAnalytics.LogEvent("action", "test", "test");
-        //}
+        //      FirebaseAnalytics
+        //.LogEvent(FirebaseAnalytics.EventLogin);
+        Debug.LogError(
+                 "AnalyticsEventTest: firebaseInitialized:" + firebaseInitialized);
+        if (firebaseInitialized)
+        {
+            FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup,FirebaseAnalytics.ParameterGroupId,"spoon_welders");
+        }
     }
 }
