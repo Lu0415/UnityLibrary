@@ -55,7 +55,7 @@ public class FirebaseAnalyticsController : MonoBehaviour
           FirebaseAnalytics.UserPropertySignUpMethod,
           "Google");
         // Set the user ID.
-        FirebaseAnalytics.SetUserId("uber_user_511");
+        FirebaseAnalytics.SetUserId("uber_user_510");
         // Set default session duration values.
         FirebaseAnalytics.SetSessionTimeoutDuration(new TimeSpan(0, 30, 0));
         firebaseInitialized = true;
@@ -65,11 +65,10 @@ public class FirebaseAnalyticsController : MonoBehaviour
     {
         //      FirebaseAnalytics
         //.LogEvent(FirebaseAnalytics.EventLogin);
-        Debug.LogError(
-                 "AnalyticsEventTest: firebaseInitialized:" + firebaseInitialized);
+        Debug.Log("AnalyticsEventTest: firebaseInitialized:" + firebaseInitialized);
         if (firebaseInitialized)
         {
-            FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup,FirebaseAnalytics.ParameterGroupId,"spoon_welders");
+            FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup,FirebaseAnalytics.ParameterGroupId,"spoon_welders_1");
         }
     }
 }
